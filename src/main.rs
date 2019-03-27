@@ -5,6 +5,7 @@ use url::form_urlencoded;
 use std::error::Error;
 use std::env;
 
+#[derive(Debug)]
 struct RadarrConfig {
     api_token: String,
     hostname: String,
@@ -19,13 +20,29 @@ impl RadarrConfig {
             protocol: String::from("http"),
         })
     }
+
+    pub fn new_from_env() -> Option<RadarrConfig> {
+        let api_token = env::var("RADARR_API_TOKEN")
+            .expect("RADARR_API_TOKEN environment variable must be set");
+
+        let hostname = env::var("RADARR_API_HOSTNAME")
+            .unwrap_or(String::from("localhost"));
+
+        let protocol = env::var("RADARR_API_PROTOCOL")
+            .unwrap_or(String::from("http"));
+
+        Some(RadarrConfig {
+            api_token,
+            hostname,
+            protocol,
+        })
+    }
 }
 
 fn main() {
-    let api_token = env::var("RADARR_API_TOKEN").expect("Need RADARR_API_TOKEN");
-    let hostname = env::var("RADARR_HOSTNAME").expect("Need RADARR_HOSTNAME");
+    let config = RadarrConfig::new_from_env().unwrap();
 
-    let config = RadarrConfig::new(api_token, hostname).unwrap();
+    eprintln!("{:?}", config);
 
     match search(&config, "The Shining") {
         Ok(body) => println!("{}", body),
