@@ -22,6 +22,9 @@ fn main() {
     let health = client.health().expect("Failed to get health");
     eprintln!("Health: {:#?}", health);
 
+    let root_folders = client.root_folder().expect("Failed to get root folders");
+    eprintln!("Root folders: {:#?}", root_folders);
+
     let cinema_id = Cinema::to_cinema_id("new-mission").unwrap();
     let body = Cinema::get_calendar_data(&cinema_id).expect("expected thing");
     let (_cinema, films) = Cinema::from_calendar_data(&body).expect("expected thing");

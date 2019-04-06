@@ -8,6 +8,7 @@ use super::config;
 use super::search_result::SearchResult;
 use super::status_response::StatusResponse;
 use super::health_response::HealthResponse;
+use super::root_folder_response::RootFolderResponse;
 
 pub struct Client {
     pub config: config::Config,
@@ -61,6 +62,19 @@ impl Client {
         let health: Vec<HealthResponse> = serde_json::from_str(&body)?;
         
         Ok(health)
+    }
+
+    pub fn root_folder(&self) -> Result<Vec<RootFolderResponse>, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let url = self.url_for("rootfolder", &query_string);
+        let body = reqwest::get(&url)?.text()?;
+
+        let root_folder: Vec<RootFolderResponse> = serde_json::from_str(&body)?;
+        
+        Ok(root_folder)
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {
