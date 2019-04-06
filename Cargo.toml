@@ -1,5 +1,5 @@
 [package]
-name = "radarr_client"
+name = "radarr"
 version = "0.1.0"
 authors = ["Spike Grobstein <me@spike.cx>"]
 edition = "2018"

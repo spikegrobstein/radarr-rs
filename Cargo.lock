@@ -718,7 +718,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "radarr_client"
+name = "radarr"
 version = "0.1.0"
 dependencies = [
  "alamo_movies 0.1.0 (git+https://github.com/spikegrobstein/alamo-movies-rust.git?branch=make-lib)",
