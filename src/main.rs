@@ -15,6 +15,10 @@ fn main() {
     let config = radarr::Config::new_from_env().unwrap();
     let client = radarr::Client::new(config);
 
+    let status = client.status().expect("Failed to connect");
+
+    eprintln!("Status: {:#?}", status);
+
     let cinema_id = Cinema::to_cinema_id("new-mission").unwrap();
     let body = Cinema::get_calendar_data(&cinema_id).expect("expected thing");
     let (_cinema, films) = Cinema::from_calendar_data(&body).expect("expected thing");

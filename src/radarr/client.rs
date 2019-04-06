@@ -6,6 +6,7 @@ use std::error::Error;
 
 use super::config;
 use super::search_result::SearchResult;
+use super::status_response::StatusResponse;
 
 pub struct Client {
     pub config: config::Config,
@@ -33,6 +34,19 @@ impl Client {
         }
 
         Ok(Some(results))
+    }
+
+    pub fn status(&self) -> Result<StatusResponse, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let url = self.url_for("system/status", &query_string);
+        let body = reqwest::get(&url)?.text()?;
+
+        let status = serde_json::from_str(&body)?;
+        
+        Ok(status)
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {
