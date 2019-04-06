@@ -7,6 +7,7 @@ use std::error::Error;
 use super::config;
 use super::search_result::SearchResult;
 use super::status_response::StatusResponse;
+use super::health_response::HealthResponse;
 
 pub struct Client {
     pub config: config::Config,
@@ -47,6 +48,19 @@ impl Client {
         let status = serde_json::from_str(&body)?;
         
         Ok(status)
+    }
+
+    pub fn health(&self) -> Result<Vec<HealthResponse>, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let url = self.url_for("health", &query_string);
+        let body = reqwest::get(&url)?.text()?;
+
+        let health: Vec<HealthResponse> = serde_json::from_str(&body)?;
+        
+        Ok(health)
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {
