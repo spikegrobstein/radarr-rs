@@ -31,6 +31,22 @@ fn main() {
     let movie = client.movie(63).expect("Failed to get alien");
     eprintln!("movie: {:#?}", movie);
 
+    let good_movie_resp = match client.search("affinity") {
+        Ok(Some(movies)) => movies,
+        Ok(None) => panic!("No movie results."),
+        Err(error) => panic!("Error: {}", error),
+    };
+
+    eprintln!("TMDB ID: {}", good_movie_resp[0].tmdb_id);
+
+    if let Some(mut good_movie) = radarr::AddMoviePayload::from_movie_response(&good_movie_resp[0]) {
+        good_movie.set_monitored(true);
+        good_movie.set_root_folder_path("/storage/Movies");
+        client.add_movie(&good_movie).expect("Failed to add movie");
+    } else {
+        panic!("Failed to get good movie");
+    }
+
     let cinema_id = Cinema::to_cinema_id("new-mission").unwrap();
     let body = Cinema::get_calendar_data(&cinema_id).expect("expected thing");
     let (_cinema, films) = Cinema::from_calendar_data(&body).expect("expected thing");

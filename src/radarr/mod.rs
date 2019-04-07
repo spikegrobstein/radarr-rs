@@ -13,6 +13,8 @@ mod movie_file;
 mod revision;
 mod quality;
 mod quality_spec;
+mod add_movie_payload;
+mod add_options;
 
 pub use search_result::SearchResult;
 pub use config::Config;
@@ -29,3 +31,6 @@ pub use movie_file::MovieFile;
 pub use revision::Revision;
 pub use quality::Quality;
 pub use quality_spec::QualitySpec;
+pub use add_movie_payload::AddMoviePayload;
+pub use add_options::AddOptions;
+

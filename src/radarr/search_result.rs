@@ -2,6 +2,8 @@
 
 use serde::{Serialize, Deserialize};
 
+use super::image::Image;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SearchResult {
     pub title: String,
@@ -61,5 +63,7 @@ pub struct SearchResult {
 
     #[serde(rename = "qualityProfileId")]
     pub quality_profile_id: u32,
+
+    pub images: Vec<Image>,
 }
 

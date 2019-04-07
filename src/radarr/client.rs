@@ -10,6 +10,7 @@ use super::status_response::StatusResponse;
 use super::health_response::HealthResponse;
 use super::root_folder_response::RootFolderResponse;
 use super::movie_response::MovieResponse;
+use super::add_movie_payload::AddMoviePayload;
 
 pub struct Client {
     pub config: config::Config,
@@ -105,6 +106,30 @@ impl Client {
         let movie: MovieResponse = serde_json::from_str(&body)?;
 
         Ok(movie)
+    }
+
+    pub fn add_movie(&self, movie: &AddMoviePayload) -> Result<String, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let url = self.url_for("movie", &query_string);
+        let client = reqwest::Client::new();
+
+        let payload: String = serde_json::to_string(movie)?;
+
+        println!("Payload: {}", payload);
+        let mut res = client.post(&url)
+            .body(payload)
+            .send()?;
+
+        if res.status().is_success() {
+            let body = res.text()?;
+            Ok(body)
+        } else {
+            let body = res.text()?;
+            panic!("woof: {}", body);
+        }
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {
