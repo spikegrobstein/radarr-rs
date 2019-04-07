@@ -144,7 +144,27 @@ impl Client {
             Ok(body)
         } else {
             let body = res.text()?;
+            // FIXME this should actually percolate up an error
             panic!("woof: {}", body);
+        }
+    }
+
+    pub fn delete_movie(&self, movie_id: u32, delete_files: bool) -> Result<(), Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+        
+        let uri = format!("movie/{}", movie_id);
+        let url = self.api_url_for(&uri, &query_string);
+        let client = reqwest::Client::new();
+
+        let mut res = client.delete(&url).send()?;
+
+        if res.status().is_success() {
+            Ok(())
+        } else {
+            let body = res.text()?;
+            panic!("Failed ot delete movie: {}", body);
         }
     }
 
