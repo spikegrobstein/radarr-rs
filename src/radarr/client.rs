@@ -29,7 +29,7 @@ impl Client {
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("movie/lookup", &query_string);
+        let url = self.api_url_for("movie/lookup", &query_string);
         let body = reqwest::get(&url)?.text()?;
         let results: Vec<SearchResult> = serde_json::from_str(&body)?;
 
@@ -45,7 +45,7 @@ impl Client {
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("system/status", &query_string);
+        let url = self.api_url_for("system/status", &query_string);
         let body = reqwest::get(&url)?.text()?;
 
         let status = serde_json::from_str(&body)?;
@@ -58,7 +58,7 @@ impl Client {
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("health", &query_string);
+        let url = self.api_url_for("health", &query_string);
         let body = reqwest::get(&url)?.text()?;
 
         let health: Vec<HealthResponse> = serde_json::from_str(&body)?;
@@ -71,7 +71,7 @@ impl Client {
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("rootfolder", &query_string);
+        let url = self.api_url_for("rootfolder", &query_string);
         let body = reqwest::get(&url)?.text()?;
 
         let root_folder: Vec<RootFolderResponse> = serde_json::from_str(&body)?;
@@ -84,7 +84,7 @@ impl Client {
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("movie", &query_string);
+        let url = self.api_url_for("movie", &query_string);
         let body = reqwest::get(&url)?.text()?;
 
         // println!("{}", body);
@@ -100,7 +100,7 @@ impl Client {
             .finish();
 
         let uri = &format!("movie/{id}", id = id);
-        let url = self.url_for(uri, &query_string);
+        let url = self.api_url_for(uri, &query_string);
         let body = reqwest::get(&url)?.text()?;
 
         let movie: MovieResponse = serde_json::from_str(&body)?;
@@ -113,7 +113,7 @@ impl Client {
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("movie", &query_string);
+        let url = self.api_url_for("movie", &query_string);
         let client = reqwest::Client::new();
 
         let payload: String = serde_json::to_string(movie)?;
@@ -133,10 +133,16 @@ impl Client {
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {
-        format!("{}://{}/api/{}?{}",
+        format!("{}://{}/{}?{}",
                 &self.config.protocol,
                 &self.config.hostname,
                 uri,
                 query_string)
+    }
+
+    pub fn api_url_for(&self, uri: &str, query_string: &str) -> String {
+        let uri = format!("api/{}", uri);
+
+        self.url_for(&uri, query_string)
     }
 }
