@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 use super::rating::Rating;
 use super::image::Image;
 use super::alternative_title::AlternativeTitle;
+use super::movie_file::MovieFile;
 
 // {
   // "title": "Assassin's Creed",
@@ -123,4 +124,9 @@ pub struct MovieResponse {
     pub quality_profile_id: u32,
 
     pub id: u32,
+
+    pub edition: Option<String>,
+
+    #[serde(rename = "movieFile")]
+    pub movie_file: Option<MovieFile>,
 }
