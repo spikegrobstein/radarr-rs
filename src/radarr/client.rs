@@ -11,6 +11,7 @@ use super::health_response::HealthResponse;
 use super::root_folder_response::RootFolderResponse;
 use super::movie_response::MovieResponse;
 use super::add_movie_payload::AddMoviePayload;
+use super::ping_response::PingResponse;
 
 pub struct Client {
     pub config: config::Config,
@@ -64,6 +65,21 @@ impl Client {
         let health: Vec<HealthResponse> = serde_json::from_str(&body)?;
         
         Ok(health)
+    }
+
+    pub fn ping(&self) -> Result<PingResponse, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let url = self.url_for("signalr/ping", &query_string);
+        let body = reqwest::get(&url)?.text()?;
+
+        println!("Ping Response: {}", body);
+
+        let ping_response = serde_json::from_str(&body)?;
+
+        Ok(ping_response)
     }
 
     pub fn root_folder(&self) -> Result<Vec<RootFolderResponse>, Box<dyn Error>> {

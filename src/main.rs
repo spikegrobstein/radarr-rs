@@ -22,6 +22,9 @@ fn main() {
     let health = client.health().expect("Failed to get health");
     eprintln!("Health: {:#?}", health);
 
+    let ping = client.ping().expect("Failed to ping");
+    eprintln!("Ping: {:#?}", ping);
+
     let root_folders = client.root_folder().expect("Failed to get root folders");
     eprintln!("Root folders: {:#?}", root_folders);
 
