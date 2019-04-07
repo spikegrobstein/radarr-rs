@@ -9,6 +9,7 @@ use super::search_result::SearchResult;
 use super::status_response::StatusResponse;
 use super::health_response::HealthResponse;
 use super::root_folder_response::RootFolderResponse;
+use super::movie_response::MovieResponse;
 
 pub struct Client {
     pub config: config::Config,
@@ -75,6 +76,21 @@ impl Client {
         let root_folder: Vec<RootFolderResponse> = serde_json::from_str(&body)?;
         
         Ok(root_folder)
+    }
+
+    pub fn list_movies(&self) -> Result<Vec<MovieResponse>, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let url = self.url_for("movie", &query_string);
+        let body = reqwest::get(&url)?.text()?;
+
+        // println!("{}", body);
+
+        let movies: Vec<MovieResponse> = serde_json::from_str(&body)?;
+
+        Ok(movies)
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {

@@ -25,6 +25,9 @@ fn main() {
     let root_folders = client.root_folder().expect("Failed to get root folders");
     eprintln!("Root folders: {:#?}", root_folders);
 
+    let movies = client.list_movies().expect("failed to list movies");
+    eprintln!("movies: {}", movies.len());
+
     let cinema_id = Cinema::to_cinema_id("new-mission").unwrap();
     let body = Cinema::get_calendar_data(&cinema_id).expect("expected thing");
     let (_cinema, films) = Cinema::from_calendar_data(&body).expect("expected thing");
