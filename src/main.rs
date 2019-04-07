@@ -28,6 +28,9 @@ fn main() {
     let movies = client.list_movies().expect("failed to list movies");
     eprintln!("movies: {}", movies.len());
 
+    let movie = client.movie(63).expect("Failed to get alien");
+    eprintln!("movie: {:#?}", movie);
+
     let cinema_id = Cinema::to_cinema_id("new-mission").unwrap();
     let body = Cinema::get_calendar_data(&cinema_id).expect("expected thing");
     let (_cinema, films) = Cinema::from_calendar_data(&body).expect("expected thing");

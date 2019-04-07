@@ -23,12 +23,12 @@ impl Client {
     }
 
     pub fn search(&self, term: &str) -> Result<Option<Vec<SearchResult>>, Box<dyn Error>> {
-        let title_encoded: String = form_urlencoded::Serializer::new(String::new())
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("term", term)
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
-        let url = self.url_for("movie/lookup", &title_encoded);
+        let url = self.url_for("movie/lookup", &query_string);
         let body = reqwest::get(&url)?.text()?;
         let results: Vec<SearchResult> = serde_json::from_str(&body)?;
 
@@ -91,6 +91,20 @@ impl Client {
         let movies: Vec<MovieResponse> = serde_json::from_str(&body)?;
 
         Ok(movies)
+    }
+
+    pub fn movie(&self, id: u32) -> Result<MovieResponse, Box<dyn Error>> {
+        let query_string: String = form_urlencoded::Serializer::new(String::new())
+            .append_pair("apikey", &self.config.api_token)
+            .finish();
+
+        let uri = &format!("movie/{id}", id = id);
+        let url = self.url_for(uri, &query_string);
+        let body = reqwest::get(&url)?.text()?;
+
+        let movie: MovieResponse = serde_json::from_str(&body)?;
+
+        Ok(movie)
     }
 
     pub fn url_for(&self, uri: &str, query_string: &str) -> String {
