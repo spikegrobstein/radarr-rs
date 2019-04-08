@@ -12,6 +12,7 @@ use super::root_folder_response::RootFolderResponse;
 use super::movie_response::MovieResponse;
 use super::add_movie_payload::AddMoviePayload;
 use super::ping_response::PingResponse;
+use super::error;
 
 pub struct Client {
     pub config: config::Config,
@@ -134,7 +135,7 @@ impl Client {
 
         let payload: String = serde_json::to_string(movie)?;
 
-        println!("Payload: {}", payload);
+        // println!("Payload: {}", payload);
         let mut res = client.post(&url)
             .body(payload)
             .send()?;
@@ -145,7 +146,7 @@ impl Client {
         } else {
             let body = res.text()?;
             // FIXME this should actually percolate up an error
-            panic!("woof: {}", body);
+            Err(Box::new(error::UnableToAddMovie::with_msg("Unable to add movie")))
         }
     }
 
