@@ -15,13 +15,17 @@ use super::ping_response::PingResponse;
 use super::error;
 
 pub struct Client {
-    pub config: config::Config,
+    pub config: config::MaterializedConfig,
 }
 
 impl Client {
-    pub fn new(config: config::Config) -> Client {
-        Client {
-            config,
+    pub fn new(config: config::Config) -> Option<Client> {
+        if let Some(config) = config::MaterializedConfig::new_from_config(config) {
+            Some(Client {
+                config,
+            })
+        } else {
+            None
         }
     }
 

@@ -12,8 +12,8 @@ mod radarr;
 // add any movies that are not already added.
 
 fn main() {
-    let config = radarr::Config::new_from_env().unwrap();
-    let client = radarr::Client::new(config);
+    let config = radarr::Config::new_from_env_with_defaults();
+    let client = radarr::Client::new(config).unwrap();
 
     let status = client.status().expect("Failed to connect");
 
