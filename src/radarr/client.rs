@@ -19,14 +19,12 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(config: config::Config) -> Option<Client> {
-        if let Some(config) = config::MaterializedConfig::new_from_config(config) {
-            Some(Client {
-                config,
-            })
-        } else {
-            None
-        }
+    pub fn new(config: config::Config) -> Result<Client, error::ConfigNotMaterializeable> {
+        let config = config::MaterializedConfig::new_from_config(config)?;
+
+        Ok(Client {
+            config,
+        })
     }
 
     pub fn search(&self, term: &str) -> Result<Option<Vec<SearchResult>>, Box<dyn Error>> {

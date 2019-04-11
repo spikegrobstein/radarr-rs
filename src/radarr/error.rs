@@ -32,3 +32,32 @@ impl error::Error for UnableToAddMovie {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct ConfigNotMaterializeable {
+    missing_fields: Vec<String>,
+}
+
+impl ConfigNotMaterializeable {
+    pub fn with_fields(missing_fields: Vec<String>) -> ConfigNotMaterializeable {
+        ConfigNotMaterializeable {
+            missing_fields,
+        }
+    }
+}
+
+impl fmt::Display for ConfigNotMaterializeable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Unable to add movie: {}", self.missing_fields.join("-"))
+    }
+}
+
+impl error::Error for ConfigNotMaterializeable {
+    fn description(&self) -> &str {
+        "unable to materialize config"
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        // Generic error, underlying cause isn't tracked.
+        None
+    }
+}

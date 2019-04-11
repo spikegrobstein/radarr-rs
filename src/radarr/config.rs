@@ -1,5 +1,7 @@
 use std::env;
 
+use super::error;
+
 const DEFAULT_HOSTNAME: &str = "localhost";
 const DEFAULT_PROTOCOL: &str = "http";
 
@@ -54,10 +56,38 @@ impl Config {
         }
     }
 
-    pub fn can_be_materialized(&self) -> bool {
-        self.api_token.is_some()
-            && self.hostname.is_some()
-            && self.protocol.is_some()
+    pub fn merge(&mut self, config: Config) {
+        if config.api_token.is_some() {
+            self.api_token = config.api_token;
+        }
+
+        if config.hostname.is_some() {
+            self.hostname = config.hostname;
+        }
+
+        if config.protocol.is_some() {
+            self.protocol = config.protocol;
+        }
+    }
+
+    pub fn errors(&self) -> Option<error::ConfigNotMaterializeable> {
+        let mut fields = vec![];
+
+        if self.api_token.is_none() {
+            fields.push(String::from("api_token"));
+        }
+        if self.hostname.is_none() {
+            fields.push(String::from("hostname"));
+        }
+        if self.protocol.is_none() {
+            fields.push(String::from("protocol"));
+        }
+
+        if fields.len() == 0 {
+            None
+        } else {
+            Some(error::ConfigNotMaterializeable::with_fields(fields))
+        }
     }
 }
 
@@ -68,15 +98,41 @@ pub struct MaterializedConfig {
 }
 
 impl MaterializedConfig {
-    pub fn new_from_config(config: Config) -> Option<MaterializedConfig> {
-        if ! config.can_be_materialized() {
-            return None;
+    pub fn new_from_config(config: Config) -> Result<MaterializedConfig, error::ConfigNotMaterializeable> {
+        if let Some(error) = config.errors() {
+            return Err(error);
         }
 
-        Some(MaterializedConfig {
+        Ok(MaterializedConfig {
             api_token: config.api_token.unwrap(),
             hostname: config.hostname.unwrap(),
             protocol: config.protocol.unwrap(),
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn merge_merges_somes() {
+        let mut c1 = Config {
+            api_token: None,
+            hostname: Some(String::from("c1a")),
+            protocol: Some(String::from("c1b")),
+        };
+
+        let c2 = Config {
+            api_token: Some(String::from("c2a")),
+            hostname: None,
+            protocol: Some(String::from("c2b")),
+        };
+
+        c1.merge(c2);
+
+        assert_eq!(&c1.api_token.unwrap(), "c2a");
+        assert_eq!(&c1.hostname.unwrap(), "c1a");
+        assert_eq!(&c1.protocol.unwrap(), "c2b");
+    }
+}   
