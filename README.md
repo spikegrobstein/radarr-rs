@@ -20,19 +20,21 @@ A quick example:
 ```rust
 use radarr;
 
-let config = radarr::Config::new("XXXXXXXXXXXXXXXXXXXXX", "radarr.local").unwrap();
-let client = radarr::Client::new(config);
+fn main() {
+  let config = radarr::Config::new_with_defaults("XXXXXXXXXXXXXXXXXXXXX").unwrap();
+  let client = radarr::Client::new(config).expect("Failed to create radarr client");
 
-// now we can make calls:
-let health = client.health().expect("Failed to connect to radarr host");
+  // now we can make calls:
+  let health = client.health().expect("Failed to connect to radarr host");
 
-println!("Connected: {}", health.message);
+  println!("Connected: {}", health.message);
+}
 ```
 
-Alternatively, if you have environment variables set, you can use `radarr::Config::new_from_env()` to
+Alternatively, if you have environment variables set, you can use `radarr::Config::new_from_env_with_defaults()` to
 initialize a config from that. It expects the following variables:
 
- * `RADARR_API_TOKEN` -- the API token. This is *required* and without it, the config will not be created.
+ * `RADARR_API_TOKEN` -- the API token. Without this, the `Config.api_token` will be `None`
  * `RADARR_API_HOSTNAME` -- the hostname for the radar instance. Defaults to `localhost`. This may contain a
      port specifier. For example `radarr.example.com` or `localhost:8585` are valid values.
  * `RADARR_API_PROTOCOL` -- the protocol to use for the api. Defaults to `http`.
