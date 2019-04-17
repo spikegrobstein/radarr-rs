@@ -11,3 +11,4 @@ url = "1.7.2"
 # clap = "2.32.0"
 alamo_movies = { git = "https://github.com/spikegrobstein/alamo-movies-rust.git", branch = "make-lib" }
 serde = { version = "1.0.89", features = ["derive"] }
+clap = "2.33.0"
