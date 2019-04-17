@@ -19,7 +19,7 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(config: config::Config) -> Result<Client, error::ConfigNotMaterializeable> {
+    pub fn new(config: config::Config) -> Result<Client, Box<dyn Error>> {
         let config = config::MaterializedConfig::new_from_config(config)?;
 
         Ok(Client {

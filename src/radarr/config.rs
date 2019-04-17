@@ -1,5 +1,6 @@
 use std::env;
 
+use std::error::Error;
 use super::error;
 
 const DEFAULT_HOSTNAME: &str = "localhost";
@@ -98,9 +99,9 @@ pub struct MaterializedConfig {
 }
 
 impl MaterializedConfig {
-    pub fn new_from_config(config: Config) -> Result<MaterializedConfig, error::ConfigNotMaterializeable> {
+    pub fn new_from_config(config: Config) -> Result<MaterializedConfig, Box<dyn Error>> {
         if let Some(error) = config.errors() {
-            return Err(error);
+            return Err(Box::new(error));
         }
 
         Ok(MaterializedConfig {
