@@ -4,6 +4,8 @@ use url::form_urlencoded;
 
 use std::error::Error;
 
+use reqwest::Response;
+
 use super::config;
 use super::search_result::SearchResult;
 use super::status_response::StatusResponse;
@@ -27,107 +29,114 @@ impl Client {
         })
     }
 
-    pub fn search(&self, term: &str) -> Result<Option<Vec<SearchResult>>, Box<dyn Error>> {
+    pub fn search(&self, term: &str) -> Result<(Response, Option<Vec<SearchResult>>), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("term", term)
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let url = self.api_url_for("movie/lookup", &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
         let results: Vec<SearchResult> = serde_json::from_str(&body)?;
 
         if results.len() == 0 {
-            return Ok(None);
+            return Ok((resp, None));
         }
 
-        Ok(Some(results))
+        Ok((resp, Some(results)))
     }
 
-    pub fn status(&self) -> Result<StatusResponse, Box<dyn Error>> {
+    pub fn status(&self) -> Result<(Response, StatusResponse), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let url = self.api_url_for("system/status", &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
 
         let status = serde_json::from_str(&body)?;
         
-        Ok(status)
+        Ok((resp, status))
     }
 
-    pub fn health(&self) -> Result<Vec<HealthResponse>, Box<dyn Error>> {
+    pub fn health(&self) -> Result<(Response,  Vec<HealthResponse>), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let url = self.api_url_for("health", &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
 
         let health: Vec<HealthResponse> = serde_json::from_str(&body)?;
         
-        Ok(health)
+        Ok((resp, health))
     }
 
-    pub fn ping(&self) -> Result<PingResponse, Box<dyn Error>> {
+    pub fn ping(&self) -> Result<(Response, PingResponse), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let url = self.url_for("signalr/ping", &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
 
         println!("Ping Response: {}", body);
 
         let ping_response = serde_json::from_str(&body)?;
 
-        Ok(ping_response)
+        Ok((resp, ping_response))
     }
 
-    pub fn root_folder(&self) -> Result<Vec<RootFolderResponse>, Box<dyn Error>> {
+    pub fn root_folder(&self) -> Result<(Response, Vec<RootFolderResponse>), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let url = self.api_url_for("rootfolder", &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
 
         let root_folder: Vec<RootFolderResponse> = serde_json::from_str(&body)?;
         
-        Ok(root_folder)
+        Ok((resp, root_folder))
     }
 
-    pub fn list_movies(&self) -> Result<Vec<MovieResponse>, Box<dyn Error>> {
+    pub fn list_movies(&self) -> Result<(Response, Vec<MovieResponse>), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let url = self.api_url_for("movie", &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
 
         // println!("{}", body);
 
         let movies: Vec<MovieResponse> = serde_json::from_str(&body)?;
 
-        Ok(movies)
+        Ok((resp, movies))
     }
 
-    pub fn movie(&self, id: u32) -> Result<MovieResponse, Box<dyn Error>> {
+    pub fn get_movie(&self, id: u32) -> Result<(Response, MovieResponse), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
 
         let uri = &format!("movie/{id}", id = id);
         let url = self.api_url_for(uri, &query_string);
-        let body = reqwest::get(&url)?.text()?;
+        let mut resp = reqwest::get(&url)?;
+        let body = resp.text()?;
 
         let movie: MovieResponse = serde_json::from_str(&body)?;
 
-        Ok(movie)
+        Ok((resp, movie))
     }
 
-    pub fn add_movie(&self, movie: &AddMoviePayload) -> Result<String, Box<dyn Error>> {
+    pub fn add_movie(&self, movie: &AddMoviePayload) -> Result<(Response, String), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
@@ -138,21 +147,21 @@ impl Client {
         let payload: String = serde_json::to_string(movie)?;
 
         // println!("Payload: {}", payload);
-        let mut res = client.post(&url)
+        let mut resp = client.post(&url)
             .body(payload)
             .send()?;
 
-        if res.status().is_success() {
-            let body = res.text()?;
-            Ok(body)
+        if resp.status().is_success() {
+            let body = resp.text()?;
+            Ok((resp, body))
         } else {
-            let body = res.text()?;
+            let body = resp.text()?;
             // FIXME this should actually percolate up an error
             Err(Box::new(error::UnableToAddMovie::with_msg("Unable to add movie")))
         }
     }
 
-    pub fn delete_movie(&self, movie_id: u32, delete_files: bool) -> Result<(), Box<dyn Error>> {
+    pub fn delete_movie(&self, movie_id: u32, delete_files: bool) -> Result<(Response, ()), Box<dyn Error>> {
         let query_string: String = form_urlencoded::Serializer::new(String::new())
             .append_pair("apikey", &self.config.api_token)
             .finish();
@@ -161,13 +170,13 @@ impl Client {
         let url = self.api_url_for(&uri, &query_string);
         let client = reqwest::Client::new();
 
-        let mut res = client.delete(&url).send()?;
+        let mut resp = client.delete(&url).send()?;
 
-        if res.status().is_success() {
-            Ok(())
+        if resp.status().is_success() {
+            Ok((resp, ()))
         } else {
-            let body = res.text()?;
-            panic!("Failed ot delete movie: {}", body);
+            let body = resp.text()?;
+            panic!("Failed to delete movie: {}", body);
         }
     }
 
