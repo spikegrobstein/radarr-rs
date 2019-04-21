@@ -18,6 +18,8 @@ mod add_options;
 mod ping_response;
 mod error;
 
+mod response;
+
 pub use search_result::SearchResult;
 pub use config::Config;
 pub use client::Client;
@@ -36,3 +38,6 @@ pub use quality_spec::QualitySpec;
 pub use add_movie_payload::AddMoviePayload;
 pub use add_options::AddOptions;
 pub use ping_response::PingResponse;
+
+pub use response::Response;
+
