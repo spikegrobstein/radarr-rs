@@ -63,6 +63,9 @@ fn main() {
                          .help("The search query")
                          .required(true)
                          )
+                    )
+        .subcommand(SubCommand::with_name("list")
+                    .about("List all movies that are currently tracked")
                     );
 
     if let Err(error) = run(app) {
@@ -102,6 +105,8 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
     } else if let Some(matches) = matches.subcommand_matches("search") {
         let term = matches.value_of("term").unwrap();
         handle_resp(&matches, client.search(term)?)?;
+    } else if let Some(matches) = matches.subcommand_matches("list") {
+        handle_resp(&matches, client.list_movies()?)?;
     } else {
         panic!("Unreachable code.")
     }
