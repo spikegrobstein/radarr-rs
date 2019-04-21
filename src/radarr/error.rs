@@ -47,7 +47,7 @@ impl ConfigNotMaterializeable {
 
 impl fmt::Display for ConfigNotMaterializeable {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Unable to add movie: {}", self.missing_fields.join("-"))
+        write!(f, "Configuration needed: {}", self.missing_fields.join("-"))
     }
 }
 
