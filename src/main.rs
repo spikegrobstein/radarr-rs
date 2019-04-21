@@ -3,6 +3,9 @@ use alamo_movies::cinema::Cinema;
 
 use std::error::Error;
 use std::process;
+use std::fmt::Debug;
+
+use serde::Serialize;
 
 mod radarr;
 
@@ -22,6 +25,11 @@ fn main() {
         .version("0.1.0")
         .author("Spike Grobstein <me@spike.cx>")
         .about("Commandline interface for the Radarr api")
+        .arg(Arg::with_name("json")
+             .help("Output everything in json")
+             .long("json")
+             .short("j")
+             )
         .arg(Arg::with_name("hostname")
              .help("The hostname, with optional port, to connect (default: `localhost`)")
              .takes_value(true)
@@ -86,23 +94,37 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
     let client = create_client(&matches)?;
 
     if let Some(_matches) = matches.subcommand_matches("status") {
-        let (_resp, status_response) = client.status()?;
-        println!("{:#?}", status_response);
+        handle_resp(&matches, client.status()?)?;
     } else if let Some(_matches) = matches.subcommand_matches("ping") {
-        let resp = client.ping()?;
-        println!("{:#?}", resp);
+        handle_resp(&matches, client.ping()?)?;
     } else if let Some(_matches) = matches.subcommand_matches("health") {
-        let resp = client.health()?;
-        println!("{:#?}", resp);
+        handle_resp(&matches, client.health()?)?;
     } else if let Some(matches) = matches.subcommand_matches("search") {
         let term = matches.value_of("term").unwrap();
-        let resp = client.search(term)?;
-        println!("{:#?}", resp);
+        handle_resp(&matches, client.search(term)?)?;
     } else {
         panic!("Unreachable code.")
     }
 
     Ok(())
+}
+
+fn handle_resp<T: Debug + serde::Serialize>(matches: &ArgMatches, resp: radarr::Response<T>) -> Result<(), Box<dyn Error>> {
+    if matches.is_present("json") {
+        let json = serde_json::to_string(&resp.data)?;
+        println!("{}", json);
+    } else {
+        println!("{:#?}", &resp.data);
+    }
+
+    // exit non-zero if there was any error
+    if resp.api_response.status().is_server_error() {
+        process::exit(1);
+    } else if resp.api_response.status().is_client_error() {
+        process::exit(2);
+    }
+
+    process::exit(0);
 }
 
     // let config = radarr::Config::new_from_env_with_defaults();
