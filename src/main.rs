@@ -99,10 +99,14 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
         handle_resp(&matches, client.ping()?)?;
     } else if let Some(_matches) = matches.subcommand_matches("health") {
         handle_resp(&matches, client.health()?)?;
-    } else if let Some(matches) = matches.subcommand_matches("search") {
-        let term = matches.value_of("term").unwrap();
+    } else if let Some(search_matches) = matches.subcommand_matches("search") {
+        let term = search_matches.value_of("term").unwrap();
+        // let resp = client.search(term)?;
+        // let first = &resp.data[0];
+        // println!("{}", json!(first));
+        // process::exit(0);
         handle_resp(&matches, client.search(term)?)?;
-    } else if let Some(matches) = matches.subcommand_matches("list") {
+    } else if let Some(_matches) = matches.subcommand_matches("list") {
         handle_resp(&matches, client.list_movies()?)?;
     } else {
         panic!("Unreachable code.")
