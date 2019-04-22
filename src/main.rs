@@ -119,10 +119,10 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
         if let Ok(movie_id) = show_matches.value_of("movie_id").unwrap().parse::<u32>() {
             handle_resp(&matches, client.get_movie(movie_id)?)?;
         } else {
+            // TODO return a proper error
             eprintln!("Failed to parse movie_id.");
             process::exit(1);
         }
-
     } else {
         panic!("Unreachable code.")
     }
