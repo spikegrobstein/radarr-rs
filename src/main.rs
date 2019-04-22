@@ -70,6 +70,19 @@ fn main() {
                          .help("The ID of the movie to show")
                          .required(true)
                          )
+                    )
+        .subcommand(SubCommand::with_name("delete")
+                    .about("Delete the movie with the given ID")
+                    .arg(Arg::with_name("movie_id")
+                         .help("The ID of the movie to delete")
+                         .required(true)
+                         )
+                    .arg(Arg::with_name("delete_files")
+                         .help("Also delete the files on disk associated with this movie")
+                         .required(false)
+                         .long("delete-files")
+                         .short("d")
+                         )
                     );
 
     if let Err(error) = run(app) {
@@ -108,16 +121,22 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
         handle_resp(&matches, client.health()?)?;
     } else if let Some(search_matches) = matches.subcommand_matches("search") {
         let term = search_matches.value_of("term").unwrap();
-        // let resp = client.search(term)?;
-        // let first = &resp.data[0];
-        // println!("{}", json!(first));
-        // process::exit(0);
         handle_resp(&matches, client.search(term)?)?;
     } else if let Some(_matches) = matches.subcommand_matches("list") {
         handle_resp(&matches, client.list_movies()?)?;
     } else if let Some(show_matches) = matches.subcommand_matches("show") {
         if let Ok(movie_id) = show_matches.value_of("movie_id").unwrap().parse::<u32>() {
             handle_resp(&matches, client.get_movie(movie_id)?)?;
+        } else {
+            // TODO return a proper error
+            eprintln!("Failed to parse movie_id.");
+            process::exit(1);
+        }
+    } else if let Some(del_matches) = matches.subcommand_matches("delete") {
+        let delete_files = del_matches.is_present("delete_files");
+
+        if let Ok(movie_id) = del_matches.value_of("movie_id").unwrap().parse::<u32>() {
+            handle_resp(&matches, client.delete_movie(movie_id, delete_files)?)?;
         } else {
             // TODO return a proper error
             eprintln!("Failed to parse movie_id.");
