@@ -3,7 +3,7 @@ use std::env;
 use std::error::Error;
 use super::error;
 
-const DEFAULT_HOSTNAME: &str = "localhost";
+const DEFAULT_HOSTNAME: &str = "localhost:7878";
 const DEFAULT_PROTOCOL: &str = "http";
 
 const ENV_RADARR_API_TOKEN: &str = "RADARR_API_TOKEN";
