@@ -63,6 +63,13 @@ fn main() {
                     )
         .subcommand(SubCommand::with_name("list")
                     .about("List all movies that are currently tracked")
+                    )
+        .subcommand(SubCommand::with_name("show")
+                    .about("Show the movie with the given ID")
+                    .arg(Arg::with_name("movie_id")
+                         .help("The ID of the movie to show")
+                         .required(true)
+                         )
                     );
 
     if let Err(error) = run(app) {
@@ -108,6 +115,14 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
         handle_resp(&matches, client.search(term)?)?;
     } else if let Some(_matches) = matches.subcommand_matches("list") {
         handle_resp(&matches, client.list_movies()?)?;
+    } else if let Some(show_matches) = matches.subcommand_matches("show") {
+        if let Ok(movie_id) = show_matches.value_of("movie_id").unwrap().parse::<u32>() {
+            handle_resp(&matches, client.get_movie(movie_id)?)?;
+        } else {
+            eprintln!("Failed to parse movie_id.");
+            process::exit(1);
+        }
+
     } else {
         panic!("Unreachable code.")
     }
