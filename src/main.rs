@@ -1,6 +1,3 @@
-// extern crate alamo_movies;
-use alamo_movies::cinema::Cinema;
-
 use std::error::Error;
 use std::process;
 use std::fmt::Debug;
