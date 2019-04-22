@@ -2,7 +2,7 @@ use std::error::Error;
 use std::process;
 use std::fmt::Debug;
 
-use serde::Serialize;
+use serde_json::json;
 
 mod radarr;
 
@@ -113,8 +113,8 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
 
 fn handle_resp<T: Debug + serde::Serialize>(matches: &ArgMatches, resp: radarr::Response<T>) -> Result<(), Box<dyn Error>> {
     if matches.is_present("json") {
-        let json = serde_json::to_string(&resp.data)?;
-        println!("{}", json);
+        // let json = serde_json::to_string(&resp.data)?;
+        println!("{}", json!(&resp.data));
     } else {
         println!("{:#?}", &resp.data);
     }
