@@ -19,9 +19,9 @@ use clap::{Arg, App, SubCommand, ArgMatches};
 
 fn main() {
     let app = App::new("radarr")
-        .version("0.1.0")
+        .version(clap::crate_version!())
         .author("Spike Grobstein <me@spike.cx>")
-        .about("Commandline interface for the Radarr api")
+        .about(clap::crate_description!())
         .arg(Arg::with_name("json")
              .help("Output everything in json")
              .long("json")
