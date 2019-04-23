@@ -2,6 +2,7 @@
 name = "radarr"
 version = "0.1.0"
 authors = ["Spike Grobstein <me@spike.cx>"]
+description = "Commandline interface for Radarr API"
 edition = "2018"
 
 [dependencies]
