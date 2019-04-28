@@ -9,12 +9,6 @@ mod radarr;
 extern crate clap;
 use clap::{Arg, App, SubCommand, ArgMatches};
 
-enum DataSource {
-    Stdin,
-    File(String),
-    Data(String),
-}
-
 // how this should work:
 // iterate over every cinema from alamo
 // filter out all movies of show-type terror tuesday, weird wednesday, video vortext
@@ -154,13 +148,14 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
             process::exit(1);
         }
     } else if let Some(add_matches) = matches.subcommand_matches("add") {
-        let data_source = get_data_source(add_matches.value_of("file"), add_matches.value_of("data"));
+        let data_source = radarr::DataSource::from_matches(&add_matches); //(add_matches.value_of("file"), add_matches.value_of("data"));
 
         if data_source.is_none() {
             panic!("Invalid usage");
         }
 
         let data_source = data_source.unwrap();
+        let data = data_source.read()?;
 
         eprintln!("Gotta read data.");
         // let search_result = get_search_result_from(data)?;
@@ -184,97 +179,6 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn get_data_source_does_not_allow_both_args() {
-        let result = get_data_source(Some("foo"), Some("bar"));
-
-        assert!(result.is_none())
-    }
-
-    #[test]
-    fn get_data_source_returns_stdin_when_both_none() {
-        let result = get_data_source(None, None);
-        let source = result.unwrap();
-
-        match source {
-            DataSource::Stdin => {},
-            _ => panic!("Expected DataSource::Stdin"),
-        }
-    }
-
-    #[test]
-    fn get_data_source_returns_file_path_when_path_passed() {
-        let result = get_data_source(Some("/foo/bar"), None).unwrap();
-
-        match result {
-            DataSource::File(file_path) => assert_eq!(file_path, "/foo/bar"),
-            _ => panic!("Expected DataSource::File"),
-        }
-    }
-
-    #[test]
-    fn get_data_source_returns_stdin_when_file_path_is_dash() {
-        let result = get_data_source(Some("-"), None).unwrap();
-
-        match result {
-            DataSource::Stdin => {},
-            _ => panic!("Expected DataSource::Stdin"),
-        }
-    }
-
-    #[test]
-    fn get_data_source_returns_data_when_data_is_passed() {
-        let result = get_data_source(None, Some("foo")).unwrap();
-
-        match result {
-            DataSource::Data(data) => assert_eq!(data, "foo"),
-            _ => panic!("Expected DataSource::Data"),
-        }
-    }
-}
-fn get_data_source(file_path: Option<&str>, data: Option<&str>) -> Option<DataSource> {
-    match (file_path, data) {
-        (Some(_), Some(_)) => {
-            eprintln!("nothing.");
-            None
-        },
-        (None, Some(data)) => {
-            // got raw data
-            eprintln!("passed data");
-            Some(DataSource::Data(String::from(data)))
-        },
-        (file_path, None) => {
-            let file_path = file_path.unwrap_or("-");
-
-            if file_path == "-" {
-                // read from stdin 
-                eprintln!("stdin!");
-                Some(DataSource::Stdin)
-            } else {
-                // got just a file path
-                eprintln!("file");
-                Some(DataSource::File(String::from(file_path)))
-            }
-        },
-    }
-}
-
-// fn get_data(matches: &ArgMatches) -> Result<String, Box<dyn Error>> {
-    // match (matches.value_of("file_path"), matches.value_of("data")) {
-    // }
-    // Ok(String::from(""))
-// }
-
-// fn get_search_result_from(data: String) -> Result<radarr::MovieResponse, Box<dyn Error> {
-    // let movie_response = serde_json::from_str(&data)?;
-
-    // Ok(movie_response)
-// }
 
 fn handle_resp<T: Debug + serde::Serialize>(matches: &ArgMatches, resp: radarr::Response<T>) -> Result<(), Box<dyn Error>> {
     if matches.is_present("json") {
