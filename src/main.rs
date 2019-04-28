@@ -54,6 +54,9 @@ fn main() {
         .subcommand(SubCommand::with_name("health")
                     .about("Fetch the server's current health information")
                     )
+        .subcommand(SubCommand::with_name("root-folders")
+                    .about("List available root folders")
+                    )
         .subcommand(SubCommand::with_name("search")
                     .about("Search for films given a search term")
                     .arg(Arg::with_name("term")
@@ -145,6 +148,8 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
         handle_resp(&matches, client.ping()?)?;
     } else if let Some(_matches) = matches.subcommand_matches("health") {
         handle_resp(&matches, client.health()?)?;
+    } else if let Some(_matches) = matches.subcommand_matches("root-folders") {
+        handle_resp(&matches, client.root_folder()?)?;
     } else if let Some(search_matches) = matches.subcommand_matches("search") {
         let term = search_matches.value_of("term").unwrap();
         handle_resp(&matches, client.search(term)?)?;
