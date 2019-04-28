@@ -85,6 +85,17 @@ fn main() {
                          .short("d")
                          .takes_value(true)
                          )
+                    .arg(Arg::with_name("no-search")
+                         .help("Do not search for the movie. Just add it.")
+                         .long("no-search")
+                         .takes_value(false)
+                         )
+                    .arg(Arg::with_name("root-folder")
+                         .help("Root folder to download movie. Default is to pick first in available root folders.")
+                         .long("root-folder")
+                         .short("r")
+                         .takes_value(true)
+                         )
                     )
         .subcommand(SubCommand::with_name("delete")
                     .about("Delete the movie with the given ID")
@@ -154,15 +165,30 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
             panic!("Invalid usage");
         }
 
+        // parse the payload from wherever we're getting it.
         let data_source = data_source.unwrap();
         let data = data_source.read()?;
+        let result: radarr::SearchResult = serde_json::from_str(&data)?;
 
-        eprintln!("Gotta read data.");
-        // let search_result = get_search_result_from(data)?;
 
-        // let add_movie_payload = radarr::AddMoviePayload::from_movie_response(search_result)?;
-        // let resp = client.add_movie(add_movie_payload)?;
-        // handle_resp(&matches, resp);
+        let mut payload = radarr::AddMoviePayload::from_movie_response(&result).unwrap();
+        if ! add_matches.is_present("no-search") {
+            payload.set_search_for_movie(true);
+        }
+
+        let root_folder = 
+            if let Some(root_folder) = add_matches.value_of("root-folder") {
+                root_folder.to_string()
+            } else {
+                let root_folders = client.root_folder()?;
+                root_folders.data[0].path.to_owned()
+            };
+
+        payload.set_root_folder_path(&root_folder);
+
+        let resp = client.add_movie(&payload)?;
+        handle_resp(&matches, resp)?;
+        
     } else if let Some(del_matches) = matches.subcommand_matches("delete") {
         let delete_files = del_matches.is_present("delete_files");
 

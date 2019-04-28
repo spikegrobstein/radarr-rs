@@ -1,6 +1,11 @@
 use clap::ArgMatches;
 use std::error::Error;
 
+use std::fs::File;
+use std::io::prelude::*;
+
+use std::io::{self, Read};
+
 pub enum DataSource {
     Stdin,
     File(String),
@@ -44,12 +49,21 @@ impl DataSource {
 
     pub fn read(&self) -> Result<String, Box<dyn Error>> {
         match self {
-            DataSource::Data(data) => Ok(data.to_string()),
+            DataSource::Data(data) => {
+                Ok(data.to_string())
+            },
             DataSource::File(file_path) => {
-                Ok(file_path.to_string())
+                let mut file = File::open(file_path)?;
+                let mut contents = String::new();
+                file.read_to_string(&mut contents)?;
+                
+                Ok(contents)
             },
             DataSource::Stdin => {
-                Ok(String::from("stdin"))
+                let mut contents = String::new();
+                io::stdin().read_to_string(&mut contents)?;
+
+                Ok(contents)
             },
         }
     }
