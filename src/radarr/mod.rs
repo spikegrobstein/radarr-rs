@@ -17,7 +17,6 @@ mod add_movie_payload;
 mod add_options;
 mod ping_response;
 mod error;
-mod data_source;
 
 mod response;
 
@@ -39,7 +38,6 @@ pub use quality_spec::QualitySpec;
 pub use add_movie_payload::AddMoviePayload;
 pub use add_options::AddOptions;
 pub use ping_response::PingResponse;
-pub use data_source::DataSource;
 
 pub use response::Response;
 
