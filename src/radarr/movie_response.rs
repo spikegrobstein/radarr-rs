@@ -68,7 +68,7 @@ pub struct MovieResponse {
     pub size_on_disk: u64,
 
     pub status: String,
-    pub overview: String,
+    pub overview: Option<String>,
 
     #[serde(rename = "inCinemas")]
     pub in_cinemas: Option<String>, // datetime
@@ -115,7 +115,7 @@ pub struct MovieResponse {
     pub genres: Vec<String>,
     pub tags: Vec<String>,
     pub added: String, // datetime
-    pub ratings: Rating,
+    pub ratings: Option<Rating>,
 
     #[serde(rename = "alternativeTitles")]
     pub alternative_titles: Vec<AlternativeTitle>,
