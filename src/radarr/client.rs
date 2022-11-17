@@ -127,6 +127,7 @@ impl Client {
         // println!("Payload: {}", payload);
         let mut resp = client.post(&url)
             .body(payload)
+            .header("content-type", "application/json")
             .send()?;
 
         if resp.status().is_success() {
@@ -134,7 +135,7 @@ impl Client {
             Ok(Response::new(resp, body))
         } else {
             let body = resp.text()?;
-            eprintln!("error body: {body}");
+            eprintln!("[{}] error body: {body}", resp.status());
             // FIXME this should actually percolate up an error
             Err(Box::new(error::UnableToAddMovie::with_msg("Unable to add movie")))
         }
