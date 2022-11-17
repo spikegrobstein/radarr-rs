@@ -2,6 +2,8 @@
 
 use serde::{Serialize, Deserialize};
 
+use crate::radarr::AlternativeTitle;
+
 use super::image::Image;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -13,6 +15,9 @@ pub struct SearchResult {
 
     #[serde(rename = "sortTitle")]
     pub sort_title: String,
+
+    #[serde(rename = "alternateTitles")]
+    pub alternate_titles: Vec<AlternativeTitle>,
 
     #[serde(rename = "sizeOnDisk")]
     pub size_on_disk: u64,
