@@ -26,8 +26,8 @@ use super::add_options::AddOptions;
 pub struct AddMoviePayload {
     pub title: String,
 
-    #[serde(rename = "qualityProfileId")]
-    pub quality_profile_id: u32,
+    // #[serde(rename = "qualityProfileId")]
+    // pub quality_profile_id: u32,
 
     #[serde(rename = "titleSlug")]
     pub title_slug: String,
@@ -55,7 +55,6 @@ impl AddMoviePayload {
         }
 
         let title = movie.title.to_owned();
-        let quality_profile_id = 1; // default 'Any'
         let title_slug = movie.title_slug.to_owned();
         let images = movie.images.to_vec();
         let tmdb_id = movie.tmdb_id;
@@ -67,7 +66,6 @@ impl AddMoviePayload {
 
         Some(AddMoviePayload {
             title,
-            quality_profile_id,
             title_slug,
             images,
             tmdb_id,
@@ -82,6 +80,7 @@ impl AddMoviePayload {
     pub fn set_search_for_movie(&mut self, value: bool) {
         let search_object = AddOptions {
             search_for_movie: value,
+            monitor: "movieOnly".into(),
         };
 
         self.add_options = Some(search_object);
