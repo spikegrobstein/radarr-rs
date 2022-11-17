@@ -26,8 +26,8 @@ use super::add_options::AddOptions;
 pub struct AddMoviePayload {
     pub title: String,
 
-    // #[serde(rename = "qualityProfileId")]
-    // pub quality_profile_id: u32,
+    #[serde(rename = "qualityProfileId")]
+    pub quality_profile_id: u32,
 
     #[serde(rename = "titleSlug")]
     pub title_slug: String,
@@ -54,6 +54,7 @@ impl AddMoviePayload {
             return None;
         }
 
+        let quality_profile_id = movie.quality_profile_id;
         let title = movie.title.to_owned();
         let title_slug = movie.title_slug.to_owned();
         let images = movie.images.to_vec();
@@ -67,6 +68,7 @@ impl AddMoviePayload {
         Some(AddMoviePayload {
             title,
             title_slug,
+            quality_profile_id,
             images,
             tmdb_id,
             year,
