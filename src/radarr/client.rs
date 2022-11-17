@@ -134,6 +134,7 @@ impl Client {
             Ok(Response::new(resp, body))
         } else {
             let body = resp.text()?;
+            eprintln!("error body: {body}");
             // FIXME this should actually percolate up an error
             Err(Box::new(error::UnableToAddMovie::with_msg("Unable to add movie")))
         }
