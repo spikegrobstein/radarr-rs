@@ -48,9 +48,6 @@ fn main() {
         .subcommand(SubCommand::with_name("status")
                     .about("Fetch the current server status")
                     )
-        .subcommand(SubCommand::with_name("ping")
-                    .about("Hit the server's `ping` endpoint")
-                    )
         .subcommand(SubCommand::with_name("health")
                     .about("Fetch the server's current health information")
                     )
@@ -144,8 +141,6 @@ fn run(app: App) -> Result<(), Box<dyn Error>> {
 
     if let Some(_matches) = matches.subcommand_matches("status") {
         handle_resp(&matches, client.status()?)?;
-    } else if let Some(_matches) = matches.subcommand_matches("ping") {
-        handle_resp(&matches, client.ping()?)?;
     } else if let Some(_matches) = matches.subcommand_matches("health") {
         handle_resp(&matches, client.health()?)?;
     } else if let Some(_matches) = matches.subcommand_matches("root-folders") {

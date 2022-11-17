@@ -115,7 +115,6 @@ pub struct MovieResponse {
     pub genres: Vec<String>,
     pub tags: Vec<String>,
     pub added: String, // datetime
-    pub ratings: Option<Rating>,
 
     #[serde(rename = "alternativeTitles")]
     pub alternative_titles: Vec<AlternativeTitle>,

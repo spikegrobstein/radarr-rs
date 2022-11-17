@@ -12,7 +12,4 @@ pub struct RootFolderResponse {
 
     pub id: u32,
     pub path: String,
-
-    #[serde(rename = "totalSpace")]
-    pub total_space: u64,
 }

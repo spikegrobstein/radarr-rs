@@ -8,9 +8,6 @@ use super::image::Image;
 pub struct SearchResult {
     pub title: String,
 
-    #[serde(rename = "alternativeTitles")]
-    pub alternative_titles: Vec<String>,
-
     #[serde(rename = "secondaryYearSourceId")]
     pub secondary_year_source_id: u32,
 
@@ -18,7 +15,7 @@ pub struct SearchResult {
     pub sort_title: String,
 
     #[serde(rename = "sizeOnDisk")]
-    pub size_on_disk: u32,
+    pub size_on_disk: u64,
 
     pub status: String,
     pub overview: String,
@@ -26,17 +23,10 @@ pub struct SearchResult {
     #[serde(rename = "inCinemas")]
     pub in_cinemas: Option<String>,
 
-    pub downloaded: bool,
     pub year: u32,
 
     #[serde(rename = "hasFile")]
     pub has_file: bool,
-
-    #[serde(rename = "profileId")]
-    pub profile_id: u32,
-
-    #[serde(rename = "pathState")]
-    pub path_state: String,
 
     pub monitored: bool,
 

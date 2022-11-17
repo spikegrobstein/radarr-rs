@@ -11,7 +11,6 @@ use super::health_response::HealthResponse;
 use super::root_folder_response::RootFolderResponse;
 use super::movie_response::MovieResponse;
 use super::add_movie_payload::AddMoviePayload;
-use super::ping_response::PingResponse;
 use super::response::Response;
 use super::error;
 
@@ -68,22 +67,6 @@ impl Client {
         let health: Vec<HealthResponse> = serde_json::from_str(&body)?;
         
         Ok(Response::new(resp, health))
-    }
-
-    pub fn ping(&self) -> Result<Response<PingResponse>, Box<dyn Error>> {
-        let query_string: String = form_urlencoded::Serializer::new(String::new())
-            .append_pair("apikey", &self.config.api_token)
-            .finish();
-
-        let url = self.url_for("signalr/ping", &query_string);
-        let mut resp = reqwest::get(&url)?;
-        let body = resp.text()?;
-
-        // eprintln!("Ping Response: {}", body);
-
-        let ping_response = serde_json::from_str(&body)?;
-
-        Ok(Response::new(resp, ping_response))
     }
 
     pub fn root_folder(&self) -> Result<Response<Vec<RootFolderResponse>>, Box<dyn Error>> {
@@ -184,7 +167,7 @@ impl Client {
     }
 
     pub fn api_url_for(&self, uri: &str, query_string: &str) -> String {
-        let uri = format!("api/{}", uri);
+        let uri = format!("api/v3/{}", uri);
 
         self.url_for(&uri, query_string)
     }

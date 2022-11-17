@@ -22,8 +22,6 @@ pub struct AlternativeTitle {
     #[serde(rename = "sourceId")]
     pub source_id: u32,
 
-    pub votes: u32,
-
     #[serde(rename = "voteCount")]
     pub vote_count: u32,
 

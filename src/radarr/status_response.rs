@@ -40,12 +40,6 @@ pub struct StatusResponse {
     #[serde(rename = "isLinux")]
     pub is_linux: bool,
 
-    #[serde(rename = "isMono")]
-    pub is_mono: bool,
-
-    #[serde(rename = "isMonoRuntime")]
-    pub is_mono_runtime: bool,
-
     #[serde(rename = "isOsx")]
     pub is_osx: bool,
 
@@ -58,14 +52,8 @@ pub struct StatusResponse {
     #[serde(rename = "isWindows")]
     pub is_windows: bool,
 
-    #[serde(rename = "osVersion")]
-    pub os_version: String,
-
     #[serde(rename = "runtimeVersion")]
     pub runtime_version: String,
-
-    #[serde(rename = "sqliteVersion")]
-    pub sqlite_version: String,
 
     #[serde(rename = "startupPath")]
     pub startup_path: String,
