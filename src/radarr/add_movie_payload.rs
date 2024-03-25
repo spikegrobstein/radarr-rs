@@ -50,7 +50,7 @@ pub struct AddMoviePayload {
 
 impl AddMoviePayload {
     pub fn from_movie_response(movie: &SearchResult) -> Option<AddMoviePayload> {
-        if movie.has_file || movie.monitored {
+        if movie.movie_file.is_some() || movie.monitored {
             return None;
         }
 

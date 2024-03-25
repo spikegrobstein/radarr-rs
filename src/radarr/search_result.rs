@@ -3,6 +3,7 @@
 use serde::{Serialize, Deserialize};
 
 use crate::radarr::AlternativeTitle;
+use crate::radarr::MovieFile;
 
 use super::image::Image;
 
@@ -28,6 +29,9 @@ pub struct SearchResult {
     pub year: u32,
 
     pub monitored: bool,
+
+    #[serde(rename = "movieFile")]
+    pub movie_file: Option<MovieFile>,
 
     #[serde(rename = "minimumAvailability")]
     pub minimum_availability: String,
