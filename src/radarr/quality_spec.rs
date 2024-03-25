@@ -4,6 +4,6 @@ use serde::{Serialize, Deserialize};
 pub struct QualitySpec {
     pub id: u32,
     pub name: String,
-    pub resolution: String,
+    pub resolution: u16,
     pub modifier: String,
 }
