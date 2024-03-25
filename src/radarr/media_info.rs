@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MediaInfo {
     #[serde(rename = "containerFormat")]
-    pub container_format: String,
+    pub container_format: Option<String>,
 
     #[serde(rename = "videoFormat")]
     pub video_format: String,
