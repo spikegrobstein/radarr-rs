@@ -8,7 +8,7 @@ pub struct Quality {
     pub quality: QualitySpec,
 
     #[serde(rename = "customFormats")]
-    pub custom_formats: Vec<String>,
+    pub custom_formats: Option<Vec<String>>,
 
     pub revision: Revision,
 }
