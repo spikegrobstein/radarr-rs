@@ -19,9 +19,6 @@ pub struct SearchResult {
     #[serde(rename = "alternateTitles")]
     pub alternate_titles: Vec<AlternativeTitle>,
 
-    #[serde(rename = "sizeOnDisk")]
-    pub size_on_disk: Option<u64>,
-
     pub status: String,
     pub overview: String,
 
@@ -29,9 +26,6 @@ pub struct SearchResult {
     pub in_cinemas: Option<String>,
 
     pub year: u32,
-
-    #[serde(rename = "hasFile")]
-    pub has_file: bool,
 
     pub monitored: bool,
 
