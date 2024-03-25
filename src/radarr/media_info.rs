@@ -57,7 +57,7 @@ pub struct MediaInfo {
     pub audio_stream_count: u32,
 
     #[serde(rename = "audioChannels")]
-    pub audio_channels: u32,
+    pub audio_channels: f32,
 
     #[serde(rename = "audioChannelPositions")]
     pub audio_channel_positions: String,
