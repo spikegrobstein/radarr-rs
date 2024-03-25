@@ -6,7 +6,7 @@ pub struct MediaInfo {
     pub container_format: Option<String>,
 
     #[serde(rename = "videoFormat")]
-    pub video_format: String,
+    pub video_format: Option<String>,
 
     #[serde(rename = "videoCodecId")]
     pub video_codec_id: Option<String>,
