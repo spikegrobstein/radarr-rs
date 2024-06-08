@@ -12,7 +12,7 @@ pub struct MediaInfo {
     pub video_codec_id: Option<String>,
 
     #[serde(rename = "videoProfile")]
-    pub video_profile: String,
+    pub video_profile: Option<String>,
 
     #[serde(rename = "videoCodecLibrary")]
     pub video_codec_library: String,
