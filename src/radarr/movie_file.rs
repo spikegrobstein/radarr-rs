@@ -19,7 +19,5 @@ pub struct MovieFile {
     pub quality: Quality,
     pub edition: String,
 
-    #[serde(rename = "mediaInfo")]
-    pub media_info: MediaInfo,
     pub id: u32,
 }
