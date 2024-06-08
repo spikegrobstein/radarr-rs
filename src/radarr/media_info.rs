@@ -14,24 +14,6 @@ pub struct MediaInfo {
     #[serde(rename = "videoProfile")]
     pub video_profile: Option<String>,
 
-    #[serde(rename = "videoCodecLibrary")]
-    pub video_codec_library: String,
-
-    #[serde(rename = "videoBitrate")]
-    pub video_bitrate: u32,
-
-    #[serde(rename = "videoBitDepth")]
-    pub video_bit_depth: u32,
-
-    #[serde(rename = "videoMultiViewCount")]
-    pub video_multi_view_count: u32,
-
-    #[serde(rename = "videoColourPrimaries")]
-    pub video_colour_primaries: String,
-
-    #[serde(rename = "videoTransferCharacteristics")]
-    pub video_transfer_characteristics: String,
-
     pub width: u32,
     pub height: u32,
 
