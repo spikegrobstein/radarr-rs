@@ -65,7 +65,7 @@ pub struct MovieResponse {
     pub sort_title: String,
 
     #[serde(rename = "sizeOnDisk")]
-    pub size_on_disk: u64,
+    pub size_on_disk: Option<u64>,
 
     pub status: String,
     pub overview: Option<String>,
